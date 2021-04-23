@@ -1,0 +1,13 @@
+node_modules/
+coverage/
+dist/
+lib/
+web-build/
+web-report/
+
+ios/
+android/
+
+.expo/
+.yarn/
+.vscode/
