@@ -16,6 +16,16 @@ const styles = StyleSheet.create({
 
 export default function Screen ({route, navigation}) {
   const { itemId, otherParam } = route.params || {};
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      // Screen was focused
+      console.log('foucus', itemId);
+      // Do something
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   return (
     <View style={styles.container}>
       <Text>详情页</Text>
@@ -28,6 +38,12 @@ export default function Screen ({route, navigation}) {
       />
       </View>
       <View style={styles.btn}>
+      <Button
+        title="ScanAndPrint"
+        onPress={() => navigation.push('ScanAndPrint')}
+      />
+      </View>
+      <View style={styles.btn}>
       <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
       </View>
       <View style={styles.btn}>
@@ -37,6 +53,12 @@ export default function Screen ({route, navigation}) {
       <Button
         title="Go back to first screen in stack"
         onPress={() => navigation.popToTop()}
+      />
+      </View>
+      <View style={styles.btn}>
+      <Button
+        title="Update the title"
+        onPress={() => navigation.setOptions({ title: 'Updated!' })}
       />
       </View>
       <StatusBar style="auto" />

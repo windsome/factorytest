@@ -1,16 +1,16 @@
 module.exports = {
   "extends": [
     "airbnb",
-    "plugin:flowtype/recommended",
-    "plugin:react/recommended",
+    // "plugin:flowtype/recommended",
+    // "plugin:react/recommended",
     "prettier"
   ],
-  "plugins": [
-    "flowtype",
-    "react",
-    "prettier",
-    "react-native"
-  ],
+  // "plugins": [
+  //   "flowtype",
+  //   "react",
+  //   "prettier",
+  //   "react-native"
+  // ],
   "parserOptions": {
     "ecmaVersion": 2016,
     "sourceType": "module",
@@ -32,17 +32,17 @@ module.exports = {
     "no-shadow": 1,
     "no-return-assign": 1,
     "no-case-declarations": 1,
-    "react-native/no-unused-styles": 1,
-    "react-native/split-platform-components": 1,
+    // "react-native/no-unused-styles": 1,
+    // "react-native/split-platform-components": 1,
     "no-underscore-dangle": 0,
     "global-require": 0,
     "import/no-unresolved": 1,
     "no-param-reassign": 0,
     "consistent-return": 1,
-    "react/no-multi-comp": 1,
+    // "react/no-multi-comp": 1,
     "no-confusing-arrow": 0,
-    "react/jsx-filename-extension": 0,
+    // "react/jsx-filename-extension": 0,
     "no-console": 0,
-    "prettier/prettier": "error"
+    // "prettier/prettier": "error"
   },
 };

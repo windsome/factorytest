@@ -5,6 +5,10 @@
     "name": "my-react-app",
     "slug": "my-react-app",
     "version": "1.0.0",
+    "icon": "./src/assets/icons/icon.png",
+    "splash": {
+      "image": "./src/assets/icons/loading.png"
+    },
     "assetBundlePatterns": [
       "**/*"
     ]
