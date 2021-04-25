@@ -4,6 +4,13 @@
 3. 安装
 4. 巡检
 
+### react-native开发需将js脚本编译到index.android.bundle中,才能启动成功.
+```
+cd my-react-native
+mkdir android/app/src/main/assets/
+yarn react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res
+```
+
 ### 登录前界面
 1. 登录 (账号,密码,记住我) 是否通过手机号登录? 账号是不是就是手机号?
 2. 注册 (昵称,手机号,验证码,密码)

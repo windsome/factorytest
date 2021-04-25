@@ -1,6 +1,6 @@
 import React, { useState, useReducer, useEffect } from 'react';
+import { Appearance } from 'react-native';
 import { ThemeProvider } from 'react-native-elements';
-import { useColorScheme } from 'react-native-appearance';
 import {
   ThemeReducer,
   initialState,
@@ -11,7 +11,7 @@ import AppLoading from './AppLoading';
 
 function App () {
   const [ThemeState, dispatch] = useReducer(ThemeReducer, initialState);
-  const colorScheme = useColorScheme();
+  const colorScheme = Appearance.getColorScheme();
 
   useEffect(() => {
     if (colorScheme === 'dark') {

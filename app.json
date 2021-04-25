@@ -7,7 +7,9 @@
     "version": "1.0.0",
     "icon": "./src/assets/icons/icon.png",
     "splash": {
-      "image": "./src/assets/icons/loading.png"
+      "image": "./src/assets/icons/loading.png",
+      "_backgroundColor": "#FEF9B0",
+      "_resizeMode": "cover"
     },
     "assetBundlePatterns": [
       "**/*"
