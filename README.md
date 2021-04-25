@@ -10,10 +10,14 @@ cd my-react-native
 mkdir android/app/src/main/assets/
 yarn react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res
 ```
+### 系统本身界面
+1. 加载资源中, AppLoading
+2. 过渡界面/闪屏 Splash
 
 ### 登录前界面
 1. 登录 (账号,密码,记住我) 是否通过手机号登录? 账号是不是就是手机号?
 2. 注册 (昵称,手机号,验证码,密码)
+
 ### 登录后页面
 3. 个人信息页面展示 (修改个人信息, 可以修改哪些? 手机号? 头像? 昵称? 具体页面是什么样)
 4. 登录后首页 

@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import DetailScreen from './pages/Detail';
 import HomeScreen from './pages/Home';
 import SplashScreen from './pages/Splash';
-import SignInScreen from './pages/SignIn';
+import SignInScreen from './pages/auth/SignIn';
 import withAuth, {AuthContext} from './withAuth';
 import ScanAndPrintScreen from './pages/ScanAndPrint';
 

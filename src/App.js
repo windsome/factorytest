@@ -1,6 +1,8 @@
 import React, { useState, useReducer, useEffect } from 'react';
 import { Appearance } from 'react-native';
 import { ThemeProvider } from 'react-native-elements';
+import { Provider } from 'react-redux';
+import store from './store';
 import {
   ThemeReducer,
   initialState,
@@ -35,7 +37,9 @@ function App () {
   return (
     <ThemeReducerContext.Provider value={{ ThemeState, dispatch }}>
       <ThemeProvider useDark={ThemeState.themeMode === 'dark' ? true : false}>
-        <RootNavigator />
+        <Provider store={store}>
+          <RootNavigator />
+        </Provider>
       </ThemeProvider>
     </ThemeReducerContext.Provider>
   );
