@@ -8,6 +8,7 @@ import {
   Text,
   Input,
 } from 'react-native-elements';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { loginByPassword } from '../../modules/auth';
 import {
   meSelect,
@@ -52,7 +53,9 @@ function Page(props) {
     }
   }
 
-  let empty = username.trim().length == 0 || password.trim().length == 0;
+  let usernameEmpty = username.trim().length == 0;
+  let passwordEmpty = password.trim().length == 0;
+  let empty = usernameEmpty || passwordEmpty;
   let fetching = props.authFetching;
   let disableSubmit = empty || fetching;
 
@@ -61,8 +64,7 @@ function Page(props) {
       <View
         style={{
           width: '100%',
-          paddingHorizontal: 20,
-          alignItems: 'flex-start',
+          paddingHorizontal: 47.5,
           display: 'flex',
         }}
       >
@@ -70,22 +72,62 @@ function Page(props) {
         <Input
           placeholder="输入用户名"
           style={{ width: '100%' }}
+          containerStyle={{ paddingHorizontal: 0, marginTop: 42 }}
           value={username}
           onChangeText={setUsername}
+          rightIcon={
+            !usernameEmpty ? (
+              <MaterialIcons
+                name="cancel"
+                size={16}
+                color="#ccc"
+                onPress={() => setUsername('')}
+              />
+            ) : null
+          }
+          rightIconContainerStyle={{ marginHorizontal: 0, marginVertical: 0 }}
         />
         <Input
           placeholder="输入密码"
           style={{ width: '100%' }}
+          containerStyle={{ paddingHorizontal: 0, marginTop: 42 }}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
+          rightIcon={
+            !passwordEmpty ? (
+              <View
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+              >
+                <MaterialIcons
+                  name="cancel"
+                  size={16}
+                  color="#ccc"
+                  onPress={() => setPassword('')}
+                />
+                <Text
+                  style={{ paddingLeft: 10, fontSize: 15, color: '#212121' }}
+                  onPress={() =>
+                    setToast({ visible: true, message: '暂不支持此操作!' })
+                  }
+                >
+                  找回密码
+                </Text>
+              </View>
+            ) : null
+          }
+          rightIconContainerStyle={{ marginHorizontal: 0, marginVertical: 0 }}
         />
         <Button
           title="登录"
           containerStyle={{
             width: 280,
-            marginHorizontal: 30,
-            marginVertical: 10,
+            marginTop: 20,
+            alignSelf: 'center',
           }}
           disabled={disableSubmit}
           onPress={login}

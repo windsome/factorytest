@@ -50,7 +50,7 @@ function RootNavigator(props) {
           <>
             <Stack.Screen
               name="Home"
-              options={{ title: 'My Home' }}
+              options={{ title: '首页', headerShown: false }}
               component={HomeScreen}
             />
             <Stack.Screen name="ScanAndPrint" component={ScanAndPrintScreen} />

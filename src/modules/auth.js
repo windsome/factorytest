@@ -1,6 +1,6 @@
 import { createActions, handleActions } from 'redux-actions';
 import { requestPost } from '../utils/_request';
-import * as SecureStore from 'expo-secure-store';
+import { read, write, remove } from '../utils/storage';
 
 // import { otherSuccess } from './restful';
 
@@ -21,21 +21,21 @@ import * as SecureStore from 'expo-secure-store';
 const STORE_AUTH_TOKEN = 'user_token';
 const STORE_AUTH_USER = 'user_info';
 async function readStore() {
-  let token = await SecureStore.getItemAsync(STORE_AUTH_TOKEN);
-  let user = await SecureStore.getItemAsync(STORE_AUTH_USER);
+  let token = await read(STORE_AUTH_TOKEN);
+  let user = await read(STORE_AUTH_USER);
   if (token && user) {
     return { token, user: JSON.parse(user) };
   }
   return {};
 }
 async function saveStore(token, user) {
-  await SecureStore.setItemAsync(STORE_AUTH_TOKEN, token);
-  await SecureStore.setItemAsync(STORE_AUTH_USER, JSON.stringify(user));
+  await write(STORE_AUTH_TOKEN, token);
+  await write(STORE_AUTH_USER, JSON.stringify(user));
   return { token, user };
 }
 async function clearStore() {
-  await SecureStore.deleteItemAsync(STORE_AUTH_TOKEN);
-  await SecureStore.deleteItemAsync(STORE_AUTH_USER);
+  await remove(STORE_AUTH_TOKEN);
+  await remove(STORE_AUTH_USER);
   return null;
 }
 
