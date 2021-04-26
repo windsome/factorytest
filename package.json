@@ -1,7 +1,8 @@
 {
   "main": "index.js",
   "scripts": {
-    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "beauty": "prettier --single-quote --write 'src/**/*.{js,jsx,css,scss}'",
+    "precommit": "lint-staged",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "web": "expo start --web",
@@ -48,14 +49,18 @@
     "eslint-plugin-react": "^7.23.2",
     "eslint-plugin-react-native": "^3.10.0",
     "husky": "^4.3.6",
+    "lint-staged": "^10.5.4",
     "prettier": "^2.2.1",
     "typescript": "~4.0.0"
   },
-  "prettier": {
-    "tabWidth": 2,
-    "useTabs": false,
-    "singleQuote": true,
-    "trailingComma": "es5"
+  "lint-staged": {
+    "src/**/*.{js,jsx,json,css,scss}": [
+      "prettier --single-quote --write",
+      "git add"
+    ]
+  },
+  "eslintConfig": {
+    "extends": "react-app"
   },
   "private": true
 }

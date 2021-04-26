@@ -1,32 +1,93 @@
 import React from 'react';
-import { StyleSheet, Dimensions, Text, TextInput, View, Image, Button } from 'react-native';
-import {AuthContext} from '../../withAuth';
+import { connect, useStore } from 'react-redux';
+import { StyleSheet, Dimensions, View, ToastAndroid } from 'react-native';
+import { Button, ButtonGroup, withTheme, Text, Input } from 'react-native-elements';
+import { loginByPassword } from '../../modules/auth';
+import { meSelect, authFetchingSelect, authErrorSelect } from '../../selectors/auth';
+
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-export default function SignInScreen() {
+const Toast = ({ visible, message }) => {
+  if (visible) {
+    ToastAndroid.showWithGravityAndOffset(
+      message,
+      ToastAndroid.LONG,
+      ToastAndroid.BOTTOM,
+      25,
+      50
+    );
+    return null;
+  }
+  return null;
+};
+
+function Page(props) {
+  const store = useStore();
+  const [toast, setToast] = React.useState({visible: false, message: ''});
+  React.useEffect(() => setToast({visible: false, message: ''}), []);
+
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  const { signIn } = React.useContext(AuthContext);
+  async function login () {
+    setToast({visible: true, message: '正在登录...'});
+    let user = await props.loginByPassword({phone: username, password});
+    if (!user) {
+      let error = authErrorSelect(store);
+      let message = error && error.message;
+      setToast({visible: true, message: '登录失败!'+message});
+    } else {
+      setToast({visible: true, message: '登录成功!'});
+    }
+  }
+
+  let empty = username.trim().length == 0 || password.trim().length == 0
+  let fetching = props.authFetching;
+  let disableSubmit = empty || fetching;
 
   return (
     <View style={styles.container}>
-      <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <Button title="Sign in" onPress={() => signIn({ username, password })} />
+      <View style={{width:'100%', paddingHorizontal: 20, alignItems:'flex-start', display: 'flex'}}>
+        <Text style={{paddingTop: 21, fontSize: 24}}>账号密码登录</Text>
+        <Input
+          placeholder="输入用户名"
+          style={{width:'100%'}}
+          value={username}
+          onChangeText={setUsername}
+        />
+        <Input
+          placeholder="输入密码"
+          style={{width:'100%'}}
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <Button title="登录" 
+          containerStyle={{
+            width: 280,
+            marginHorizontal: 30,
+            marginVertical: 10,
+          }}
+        disabled={disableSubmit} onPress={login} />
+        <Toast visible={toast.visible} message={toast.message} />
+      </View>
+      <View></View>
     </View>
   );
 }
+
+const mapStateToProps = (state, props) => {
+  return {
+    me: meSelect(state, props),
+    authFetching: authFetchingSelect(state, props)
+  };
+};
+const mapActionsToProps = {
+  loginByPassword
+};
+
+export default connect(mapStateToProps, mapActionsToProps)(Page);
 
 const styles = StyleSheet.create({
   container: {
@@ -35,86 +96,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: SCREEN_HEIGHT,
     alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-  rowSelector: {
-    height: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  selectorContainer: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  selected: {
-    position: 'absolute',
-    borderRadius: 50,
-    height: 0,
-    width: 0,
-    top: -5,
-    borderRightWidth: 70,
-    borderBottomWidth: 70,
-    borderColor: 'white',
-    backgroundColor: 'white',
-  },
-  loginTextButton: {
-    fontSize: 16,
-    color: 'white',
-    fontWeight: 'bold',
-  },
-  loginButton: {
-    backgroundColor: 'rgba(232, 147, 142, 1)',
-    borderRadius: 10,
-    height: 50,
-    width: 200,
-  },
-  titleContainer: {
-    height: 150,
-    backgroundColor: 'transparent',
-    justifyContent: 'center',
-  },
-  formContainer: {
-    backgroundColor: 'white',
-    width: SCREEN_WIDTH - 30,
-    borderRadius: 10,
-    paddingTop: 32,
-    paddingBottom: 32,
-    alignItems: 'center',
-  },
-  loginText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-  bgImage: {
-    flex: 1,
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: SCREEN_HEIGHT,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  categoryText: {
-    textAlign: 'center',
-    color: 'white',
-    fontSize: 24,
-    fontFamily: 'light',
-    backgroundColor: 'transparent',
-    opacity: 0.54,
-  },
-  selectedCategoryText: {
-    opacity: 1,
-  },
-  titleText: {
-    color: 'white',
-    fontSize: 30,
-    fontFamily: 'regular',
-    textAlign: 'center',
-  },
-  helpContainer: {
-    height: 64,
-    alignItems: 'center',
-    justifyContent: 'center',
+    // justifyContent: 'space-around',
   },
 });

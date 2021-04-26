@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { StyleSheet, Text, View, Image, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -6,8 +7,9 @@ import DetailScreen from './pages/Detail';
 import HomeScreen from './pages/Home';
 import SplashScreen from './pages/Splash';
 import SignInScreen from './pages/auth/SignIn';
-import withAuth, {AuthContext} from './withAuth';
 import ScanAndPrintScreen from './pages/ScanAndPrint';
+import { authByLocalStore } from './modules/auth';
+import { meSelect, authLoadingSelect } from './selectors/auth';
 
 const Stack = createStackNavigator();
 
@@ -20,25 +22,27 @@ function LogoTitle (props) {
   );
 }
 
-function RootNavigator({authState}) {
-  const authActions = React.useContext(AuthContext);
+function RootNavigator(props) {
+  let { authLoading, me } = props;
+  React.useEffect(() => {
+    props.authByLocalStore();
+  }, []);
 
-  console.log('authState:', authState, authActions);
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
-        {authState?.isLoading ? (
+        {authLoading ? (
           // We haven't finished checking for the token yet
           <Stack.Screen name="Splash" component={SplashScreen} />
-        ): (authState?.userToken == null) ? (
+        ): (me == null) ? (
             // No token found, user isn't signed in
             <Stack.Screen
               name="SignIn"
               component={SignInScreen}
               options={{
-                title: 'Sign in',
+                title: '登录',
                 // When logging out, a pop animation feels intuitive
-                animationTypeForReplace: authState.isSignout ? 'pop' : 'push',
+                animationTypeForReplace: !me ? 'pop' : 'push',
               }}
             />
         ) : (
@@ -73,4 +77,16 @@ function RootNavigator({authState}) {
 }
 
 // export default RootNavigator;
-export default withAuth(RootNavigator);
+// export default withAuth(RootNavigator);
+
+const mapStateToProps = (state, props) => {
+  return {
+    authLoading: authLoadingSelect(state, props),
+    me: meSelect(state, props)
+  };
+};
+const mapActionsToProps = {
+  authByLocalStore
+};
+
+export default connect(mapStateToProps, mapActionsToProps)(RootNavigator);
