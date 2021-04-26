@@ -8,14 +8,13 @@ export default function SplashScreen() {
     <View>
       <Text>Loading...</Text>
       <Button
-                title={'React Native Elements'}
-                containerStyle={{
-                  width: 200,
-                  marginHorizontal: 50,
-                  marginVertical: 10,
-                }}
-              />
-
+        title={'React Native Elements'}
+        containerStyle={{
+          width: 200,
+          marginHorizontal: 50,
+          marginVertical: 10,
+        }}
+      />
     </View>
   );
 }

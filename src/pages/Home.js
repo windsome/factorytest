@@ -12,15 +12,17 @@ const styles = StyleSheet.create({
   },
 });
 
-const key='windsome';
+const key = 'windsome';
 
-export default function HomeScreen ({navigation}) {
-
-  async function save () {
-    await SecureStore.setItemAsync(key, JSON.stringify({time: new Date().getTime()}));
+export default function HomeScreen({ navigation }) {
+  async function save() {
+    await SecureStore.setItemAsync(
+      key,
+      JSON.stringify({ time: new Date().getTime() })
+    );
   }
 
-  async function read () {
+  async function read() {
     let result = await SecureStore.getItemAsync(key);
     if (result) {
       alert("🔐 Here's your value 🔐 \n" + result);
@@ -29,26 +31,21 @@ export default function HomeScreen ({navigation}) {
     }
   }
 
-
   return (
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app! test!....</Text>
-      <Button
-        title="save store"
-        onPress={save}
-      />
-      <Button
-        title="read store"
-        onPress={read}
-      />
+      <Button title="save store" onPress={save} />
+      <Button title="read store" onPress={read} />
       <Button
         title="Go to Details"
-        onPress={() => navigation.navigate('Details',{
-          itemId: 86,
-          otherParam: 'anything you want here',
-        })}
+        onPress={() =>
+          navigation.navigate('Details', {
+            itemId: 86,
+            otherParam: 'anything you want here',
+          })
+        }
       />
       <StatusBar style="auto" />
     </View>
-  )
+  );
 }

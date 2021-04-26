@@ -1,9 +1,9 @@
-export const authSelect = state => state.auth;
-export const authLoadingSelect = state => state.auth.loading;
-export const authFetchingSelect = state => state.auth.fetching;
-export const authErrorSelect = state => state.auth.error;
-export const tokenSelect = state => state.auth.token;
-export const meSelect = state => state.auth.user;
+export const authSelect = (state) => state.auth;
+export const authLoadingSelect = (state) => state.auth.loading;
+export const authFetchingSelect = (state) => state.auth.fetching;
+export const authErrorSelect = (state) => state.auth.error;
+export const tokenSelect = (state) => state.auth.token;
+export const meSelect = (state) => state.auth.user;
 // export const meSelect = state => state.auth.result;
 // export const smscodeSelect = state => state.auth.smscode;
 

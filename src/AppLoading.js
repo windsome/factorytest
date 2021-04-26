@@ -4,7 +4,7 @@ import React from 'react';
 import { cacheImages, cacheFonts } from './helpers/AssetsCaching';
 // import vectorFonts from './src/helpers/vector-fonts';
 
-export default ({onFinish, onError}) => {
+export default ({ onFinish, onError }) => {
   const loadAssetsAsync = async () => {
     const imageAssets = cacheImages([
       require('./assets/images/bg_screen1.jpg'),
@@ -18,7 +18,7 @@ export default ({onFinish, onError}) => {
     ]);
 
     const fontAssets = cacheFonts([
-    //   ...vectorFonts,
+      //   ...vectorFonts,
       { georgia: require('./assets/fonts/Georgia.ttf') },
       { regular: require('./assets/fonts/Montserrat-Regular.ttf') },
       { light: require('./assets/fonts/Montserrat-Light.ttf') },
@@ -30,11 +30,11 @@ export default ({onFinish, onError}) => {
     await Promise.all([...imageAssets, ...fontAssets]);
   };
 
-    return (
-      <AppLoading
-        startAsync={loadAssetsAsync}
-        onFinish={onFinish}
-        onError={onError}
-      />
-    );
+  return (
+    <AppLoading
+      startAsync={loadAssetsAsync}
+      onFinish={onFinish}
+      onError={onError}
+    />
+  );
 };

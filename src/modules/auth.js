@@ -10,7 +10,7 @@ import * as SecureStore from 'expo-secure-store';
  * 2. 支持密码登录
  * 3. 支持验证码登录
  * 注意:请求中需要在headers中带 `credentials: 'include'`
- * 
+ *
  * 登录接口返回数据:
  * {
  *  token,
@@ -24,14 +24,14 @@ async function readStore() {
   let token = await SecureStore.getItemAsync(STORE_AUTH_TOKEN);
   let user = await SecureStore.getItemAsync(STORE_AUTH_USER);
   if (token && user) {
-    return { token, user: JSON.parse(user)}
+    return { token, user: JSON.parse(user) };
   }
-  return {}
+  return {};
 }
 async function saveStore(token, user) {
   await SecureStore.setItemAsync(STORE_AUTH_TOKEN, token);
   await SecureStore.setItemAsync(STORE_AUTH_USER, JSON.stringify(user));
-  return {token, user};
+  return { token, user };
 }
 async function clearStore() {
   await SecureStore.deleteItemAsync(STORE_AUTH_TOKEN);
@@ -53,44 +53,44 @@ export const {
   smscode: {
     request: smscodeRequest,
     success: smscodeSuccess,
-    failure: smscodeFailure
+    failure: smscodeFailure,
   },
   login: {
     request: loginRequest,
     success: loginSuccess,
-    failure: loginFailure
+    failure: loginFailure,
   },
   logout: {
     request: logoutRequest,
     success: logoutSuccess,
-    failure: logoutFailure
-  }
+    failure: logoutFailure,
+  },
 } = createActions({
   SMSCODE: {
     REQUEST: null,
     SUCCESS: null,
-    FAILURE: null
+    FAILURE: null,
   },
   LOGIN: {
     REQUEST: null,
     SUCCESS: null,
-    FAILURE: null
+    FAILURE: null,
   },
   LOGOUT: {
     REQUEST: null,
     SUCCESS: null,
-    FAILURE: null
-  }
+    FAILURE: null,
+  },
 });
 
-export function authByLocalStore () {
+export function authByLocalStore() {
   return (dispatch, getState) => {
-    return readStore().then(result => {
-      let {token, user} = result;
+    return readStore().then((result) => {
+      let { token, user } = result;
       if (token && user) {
-        dispatch(loginSuccess({token, user}));
+        dispatch(loginSuccess({ token, user }));
       } else {
-        dispatch(loginFailure({error: null}));
+        dispatch(loginFailure({ error: null }));
       }
       return user;
     });
@@ -111,25 +111,25 @@ export function authByLocalStore () {
 //   };
 // };
 
-export const loginByPassword = userdata => {
+export const loginByPassword = (userdata) => {
   return (dispatch, getState) => {
     dispatch(loginRequest());
     return requestPost(urls.auth_by_phone_password, userdata)
-      .then(result => {
+      .then((result) => {
         if (!result) {
           throw new Error('fetch return null!');
         }
         if (result.errcode) {
           throw result;
         }
-        let { token, user} = result;
+        let { token, user } = result;
         return saveStore(token, user);
       })
-      .then(result => {
+      .then((result) => {
         dispatch(loginSuccess(result));
         return result.user;
       })
-      .catch(error => {
+      .catch((error) => {
         dispatch(loginFailure({ error }));
         // throw error;
         return null;
@@ -186,7 +186,7 @@ export const logout = () => {
   return (dispatch, getState) => {
     dispatch(logoutRequest());
     return requestPost(urls.logout, {})
-      .then(result => {
+      .then((result) => {
         if (!result) {
           throw new Error('fetch return null!');
         }
@@ -196,7 +196,7 @@ export const logout = () => {
         dispatch(logoutSuccess({ result }));
         return result;
       })
-      .catch(error => {
+      .catch((error) => {
         dispatch(logoutFailure({ error }));
         return clearStore();
       });
@@ -208,7 +208,7 @@ const reducer = handleActions(
     SMSCODE: {
       REQUEST: (state, action) => ({
         ...state,
-        smscode: { fetching: true, error: null, phone: action.payload.phone }
+        smscode: { fetching: true, error: null, phone: action.payload.phone },
       }),
       SUCCESS: (state, action) => ({
         ...state,
@@ -217,22 +217,22 @@ const reducer = handleActions(
           error: null,
           phone: action.payload.phone,
           result: action.payload.result,
-          time: new Date()
-        }
+          time: new Date(),
+        },
       }),
       FAILURE: (state, action) => ({
         ...state,
         smscode: {
           fetching: false,
           error: action.payload.error,
-          phone: action.payload.phone
-        }
-      })
+          phone: action.payload.phone,
+        },
+      }),
     },
     LOGIN: {
       REQUEST: (state, action) => ({
         ...state,
-        fetching: true
+        fetching: true,
       }),
       SUCCESS: (state, action) => ({
         ...state,
@@ -240,7 +240,7 @@ const reducer = handleActions(
         fetching: false,
         error: null,
         token: action.payload.token,
-        user: action.payload.user
+        user: action.payload.user,
       }),
       FAILURE: (state, action) => ({
         ...state,
@@ -248,29 +248,29 @@ const reducer = handleActions(
         fetching: false,
         error: action.payload.error,
         token: null,
-        user: null
-      })
+        user: null,
+      }),
     },
     LOGOUT: {
       REQUEST: (state, action) => ({
         ...state,
-        fetching: true
+        fetching: true,
       }),
       SUCCESS: (state, action) => ({
         ...state,
         fetching: false,
         error: null,
         token: null,
-        user: null
+        user: null,
       }),
       FAILURE: (state, action) => ({
         ...state,
         fetching: false,
         error: action.payload.error,
         token: null,
-        user: null
-      })
-    }
+        user: null,
+      }),
+    },
   },
   {
     smscode: {},
@@ -278,7 +278,7 @@ const reducer = handleActions(
     fetching: false,
     error: null,
     token: null,
-    user: null
+    user: null,
   }
 );
 

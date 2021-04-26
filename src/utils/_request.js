@@ -30,27 +30,27 @@ export const request = (method, url, data = {}, options) => {
   let { headers, credentials } = {
     headers: { 'Content-Type': 'application/json' },
     credentials: true,
-    ...(options || {})
+    ...(options || {}),
   };
 
   let opts = {
     method,
     headers: headers,
-    body
+    body,
   };
   if (credentials) {
     opts = {
       ...opts,
-      credentials: 'include'
+      credentials: 'include',
     };
   }
   xdebug('request', url, JSON.stringify(opts));
   return fetch(url, opts)
-    .catch(error => {
+    .catch((error) => {
       console.error('error!', error, url, opts);
       throw new Errcode('可能已经断网了', -1);
     })
-    .then(response => {
+    .then((response) => {
       if (!response.ok) {
         console.error('error! response fail!', response.statusText, url, opts);
         let message = response.statusText;
@@ -72,7 +72,7 @@ export const request = (method, url, data = {}, options) => {
         xdebug("Oops, we haven't got JSON!");
         return { errcode: -1, xContentType: contentType, xOrigData: response };
       }
-    })
+    });
 };
 
 /**
@@ -106,7 +106,7 @@ export const requestGet = (url, options) => {
  * DELETE请求的封装
  * @param {String} url 请求地址
  */
-export const requestDelete = url => {
+export const requestDelete = (url) => {
   return request('DELETE', url);
 };
 

@@ -13,7 +13,7 @@ import { meSelect, authLoadingSelect } from './selectors/auth';
 
 const Stack = createStackNavigator();
 
-function LogoTitle (props) {
+function LogoTitle(props) {
   return (
     <Image
       style={{ width: 30, height: 30 }}
@@ -34,41 +34,49 @@ function RootNavigator(props) {
         {authLoading ? (
           // We haven't finished checking for the token yet
           <Stack.Screen name="Splash" component={SplashScreen} />
-        ): (me == null) ? (
-            // No token found, user isn't signed in
-            <Stack.Screen
-              name="SignIn"
-              component={SignInScreen}
-              options={{
-                title: '登录',
-                // When logging out, a pop animation feels intuitive
-                animationTypeForReplace: !me ? 'pop' : 'push',
-              }}
-            />
+        ) : me == null ? (
+          // No token found, user isn't signed in
+          <Stack.Screen
+            name="SignIn"
+            component={SignInScreen}
+            options={{
+              title: '登录',
+              // When logging out, a pop animation feels intuitive
+              animationTypeForReplace: !me ? 'pop' : 'push',
+            }}
+          />
         ) : (
-            // User is signed in
+          // User is signed in
           <>
-            <Stack.Screen name="Home" options={{title: 'My Home'}} component={HomeScreen} />
+            <Stack.Screen
+              name="Home"
+              options={{ title: 'My Home' }}
+              component={HomeScreen}
+            />
             <Stack.Screen name="ScanAndPrint" component={ScanAndPrintScreen} />
-            <Stack.Screen name="Details" component={DetailScreen} options={({ route }) => ({ 
-              title: 'Detail '+route.params?.itemId,
-              headerStyle: {
-                backgroundColor: '#f4511e',
-              },
-              headerTintColor: '#fff',
-              headerTitleStyle: {
-                fontWeight: 'bold',
-                // alignSelf:'center'
-              },
-              headerTitle: props => <LogoTitle {...props}/>,
-              headerRight: () => (
-                <Button
-                  onPress={() => alert('This is a button!')}
-                  title="Info"
-                  // color="#f4511e"
-                />
-              ),
-            })} />
+            <Stack.Screen
+              name="Details"
+              component={DetailScreen}
+              options={({ route }) => ({
+                title: 'Detail ' + route.params?.itemId,
+                headerStyle: {
+                  backgroundColor: '#f4511e',
+                },
+                headerTintColor: '#fff',
+                headerTitleStyle: {
+                  fontWeight: 'bold',
+                  // alignSelf:'center'
+                },
+                headerTitle: (props) => <LogoTitle {...props} />,
+                headerRight: () => (
+                  <Button
+                    onPress={() => alert('This is a button!')}
+                    title="Info"
+                    // color="#f4511e"
+                  />
+                ),
+              })}
+            />
           </>
         )}
       </Stack.Navigator>
@@ -82,11 +90,11 @@ function RootNavigator(props) {
 const mapStateToProps = (state, props) => {
   return {
     authLoading: authLoadingSelect(state, props),
-    me: meSelect(state, props)
+    me: meSelect(state, props),
   };
 };
 const mapActionsToProps = {
-  authByLocalStore
+  authByLocalStore,
 };
 
 export default connect(mapStateToProps, mapActionsToProps)(RootNavigator);

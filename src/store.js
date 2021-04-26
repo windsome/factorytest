@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === 'development') {
   // redux logger
   const logger = createLogger({
     collapsed: true,
-    duration: true
+    duration: true,
   });
   middleware.push(logger);
 }

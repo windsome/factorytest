@@ -11,7 +11,7 @@ import {
 import RootNavigator from './RootNavigator';
 import AppLoading from './AppLoading';
 
-function App () {
+function App() {
   const [ThemeState, dispatch] = useReducer(ThemeReducer, initialState);
   const colorScheme = Appearance.getColorScheme();
 
@@ -43,7 +43,7 @@ function App () {
       </ThemeProvider>
     </ThemeReducerContext.Provider>
   );
-};
+}
 
 export default App;
 // export default withAuth(App);
