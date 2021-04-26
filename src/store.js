@@ -4,7 +4,12 @@ import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import rootReducer from './modules';
 
 const initialState = {};
-const composeEnhancer = compose;
+// const composeEnhancer = compose;
+// const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const composeEnhancer =
+  (typeof window !== 'undefined' &&
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
+  compose;
 const enhancers = [];
 const middleware = [thunk];
 

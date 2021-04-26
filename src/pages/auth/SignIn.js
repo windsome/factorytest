@@ -1,6 +1,13 @@
 import React from 'react';
 import { connect, useStore } from 'react-redux';
-import { StyleSheet, Dimensions, View, ToastAndroid } from 'react-native';
+import useIsMounted from '../../utils/useIsMounted';
+import {
+  StyleSheet,
+  Dimensions,
+  View,
+  Platform,
+  ToastAndroid,
+} from 'react-native';
 import {
   Button,
   ButtonGroup,
@@ -21,19 +28,22 @@ const SCREEN_HEIGHT = Dimensions.get('window').height;
 
 const Toast = ({ visible, message }) => {
   if (visible) {
-    ToastAndroid.showWithGravityAndOffset(
-      message,
-      ToastAndroid.LONG,
-      ToastAndroid.BOTTOM,
-      25,
-      50
-    );
+    if (Platform.OS === 'android') {
+      ToastAndroid.showWithGravityAndOffset(
+        message,
+        ToastAndroid.LONG,
+        ToastAndroid.CENTER,
+        25,
+        50
+      );
+    }
     return null;
   }
   return null;
 };
 
 function Page(props) {
+  const isMounted = useIsMounted();
   const store = useStore();
   const [toast, setToast] = React.useState({ visible: false, message: '' });
   React.useEffect(() => setToast({ visible: false, message: '' }), []);
@@ -44,12 +54,14 @@ function Page(props) {
   async function login() {
     setToast({ visible: true, message: '正在登录...' });
     let user = await props.loginByPassword({ phone: username, password });
-    if (!user) {
-      let error = authErrorSelect(store);
-      let message = error && error.message;
-      setToast({ visible: true, message: '登录失败!' + message });
-    } else {
-      setToast({ visible: true, message: '登录成功!' });
+    if (isMounted.current) {
+      if (!user) {
+        let error = authErrorSelect(store.getState());
+        let message = error && error.message;
+        setToast({ visible: true, message: '登录失败!' + message });
+      } else {
+        setToast({ visible: true, message: '登录成功!' });
+      }
     }
   }
 

@@ -29,7 +29,8 @@ export const request = (method, url, data = {}, options) => {
 
   let { headers, credentials } = {
     headers: { 'Content-Type': 'application/json' },
-    credentials: true,
+    mode: 'cors',
+    // credentials: true,
     ...(options || {}),
   };
 

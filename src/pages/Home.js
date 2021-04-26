@@ -1,41 +1,21 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Image, Button } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
+import { connect, useStore } from 'react-redux';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, View } from 'react-native';
+import {
+  Button,
+  ButtonGroup,
+  withTheme,
+  Text,
+  Input,
+} from 'react-native-elements';
+import { meSelect } from '../selectors/auth';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
-
-const key = 'windsome';
-
-export default function HomeScreen({ navigation }) {
-  async function save() {
-    await SecureStore.setItemAsync(
-      key,
-      JSON.stringify({ time: new Date().getTime() })
-    );
-  }
-
-  async function read() {
-    let result = await SecureStore.getItemAsync(key);
-    if (result) {
-      alert("🔐 Here's your value 🔐 \n" + result);
-    } else {
-      alert('No values stored under that key.');
-    }
-  }
-
+function Page(props) {
+  let { navigation } = props;
   return (
     <View style={styles.container}>
       <Text>Open up App.js to start working on your app! test!....</Text>
-      <Button title="save store" onPress={save} />
-      <Button title="read store" onPress={read} />
       <Button
         title="Go to Details"
         onPress={() =>
@@ -49,3 +29,21 @@ export default function HomeScreen({ navigation }) {
     </View>
   );
 }
+
+const mapStateToProps = (state, props) => {
+  return {
+    me: meSelect(state, props),
+  };
+};
+const mapActionsToProps = {};
+
+export default connect(mapStateToProps, mapActionsToProps)(Page);
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
