@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect, useStore } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, TouchableOpacity } from 'react-native';
 import {
   withTheme,
   useTheme,
@@ -15,6 +15,17 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { meSelect } from '../selectors/auth';
 import CardDevice from '../components/widgets/CardDevice';
 
+const menu = [
+  { title: '厂测', icon: 'settings', color: 'pink', page: 'Factory' },
+  { title: '安装', icon: 'pin-drop', color: 'purple', page: 'Factory' },
+  { title: '巡检', icon: 'verified', color: 'orange', page: 'Factory' },
+  { title: '数据', icon: 'storage', color: 'red', page: 'Factory' },
+  // { title: '厂测', icon: 'settings', color:'pink', page: 'Factory'},
+  // { title: '安装', icon: 'pin-drop', color:'purple', page: 'Factory'},
+  // { title: '巡检', icon: 'verified', color:'orange', page: 'Factory'},
+  // { title: '数据', icon: 'storage', color:'red', page: 'Factory'},
+];
+
 function Page(props) {
   const { theme } = useTheme();
   let { navigation, me } = props;
@@ -22,19 +33,19 @@ function Page(props) {
   let username = me.nickname || '无名';
   function handleChangePage(index) {
     setCurrent(index);
-    navigation.push('Details', {
-      itemId: Math.floor(Math.random() * 100),
-    });
+    let item = menu[index];
+    navigation.push(item.page);
   }
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <View
+        <TouchableOpacity
           style={{
             display: 'flex',
             flexDirection: 'row',
             alignItems: 'center',
           }}
+          onPress={() => navigation.push('Mine')}
         >
           <MaterialIcons name="person" size={40} color={theme.colors.primary} />
           <Text
@@ -46,7 +57,7 @@ function Page(props) {
           >
             {username}
           </Text>
-        </View>
+        </TouchableOpacity>
         <MaterialIcons
           name="qr-code-scanner"
           size={40}
@@ -66,22 +77,21 @@ function Page(props) {
           }}
           // variant="primary"
         >
-          <Tab.Item
-            title="厂测"
-            icon={<MaterialIcons name="settings" size={40} color="pink" />}
-          />
-          <Tab.Item
-            title="安装"
-            icon={<MaterialIcons name="pin-drop" size={40} color="purple" />}
-          />
-          <Tab.Item
-            title="巡检"
-            icon={<MaterialIcons name="verified" size={40} color="orange" />}
-          />
-          <Tab.Item
-            title="数据"
-            icon={<MaterialIcons name="storage" size={40} color="red" />}
-          />
+          {menu.map((item, index) => {
+            return (
+              <Tab.Item
+                title={item.title}
+                key={index}
+                icon={
+                  <MaterialIcons
+                    name={item.icon}
+                    size={40}
+                    color={item.color}
+                  />
+                }
+              />
+            );
+          })}
         </Tab>
       </View>
       <View

@@ -3,11 +3,12 @@ import { connect } from 'react-redux';
 import { StyleSheet, Text, View, Image, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import DetailScreen from './pages/Detail';
-import HomeScreen from './pages/Home';
 import SplashScreen from './pages/Splash';
 import SignInScreen from './pages/auth/SignIn';
-import ScanAndPrintScreen from './pages/ScanAndPrint';
+import DetailScreen from './pages/Detail';
+import HomeScreen from './pages/Home';
+import MineScreen from './pages/Mine';
+import ScanAndPrintScreen from './pages/factory/ScanAndPrint';
 import { authByLocalStore } from './modules/auth';
 import { meSelect, authLoadingSelect } from './selectors/auth';
 
@@ -53,7 +54,16 @@ function RootNavigator(props) {
               options={{ title: '首页', headerShown: false }}
               component={HomeScreen}
             />
-            <Stack.Screen name="ScanAndPrint" component={ScanAndPrintScreen} />
+            <Stack.Screen
+              name="Mine"
+              options={{ title: '个人中心' }}
+              component={MineScreen}
+            />
+            <Stack.Screen
+              name="Factory"
+              options={{ title: '厂测' }}
+              component={ScanAndPrintScreen}
+            />
             <Stack.Screen
               name="Details"
               component={DetailScreen}
