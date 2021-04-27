@@ -14,7 +14,7 @@ import {
 } from 'react-native-elements';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { meSelect } from '../../selectors/auth';
-import CardDevice from '../../components/widgets/CardDevice';
+import ModalQrcode from '../../components/widgets/ModalQrcode';
 
 function Step1(props) {
   // 显示产品名称/ID, 测试通过数量, 测试失败数量
@@ -27,10 +27,9 @@ function Step1(props) {
   );
 }
 
-function Step2({ value, onChangeText }) {
+function Step2({ value, onChangeText, onOpenScan }) {
   const { theme } = useTheme();
   // 扫描二维码
-  function handleScan() {}
   return (
     <View style={{ width: '100%' }}>
       <Text>扫码新品二维码获取IMEI</Text>
@@ -47,7 +46,7 @@ function Step2({ value, onChangeText }) {
               flexDirection: 'row',
               alignItems: 'center',
             }}
-            onPress={handleScan}
+            onPress={onOpenScan}
           >
             <MaterialIcons
               name="qr-code-scanner"
@@ -136,6 +135,18 @@ function Page(props) {
   const { theme } = useTheme();
   let { navigation, me } = props;
 
+  const [scanDesc, setScanDesc] = React.useState({});
+  function handleCloseModalScan() {
+    setScanDesc({ open: false });
+  }
+  function handleCommitScan(data) {
+    console.log('scan result:', data);
+  }
+  function handleOpenModalScan() {
+    console.log('scan open');
+    setScanDesc({ open: true });
+  }
+
   return (
     <View style={styles.container}>
       <View style={{ width: '100%', paddingVertical: 5 }}>
@@ -143,7 +154,7 @@ function Page(props) {
       </View>
       <View style={{ backgroundColor: 'grey', height: 1, width: '100%' }} />
       <View style={{ width: '100%', paddingVertical: 5 }}>
-        <Step2 />
+        <Step2 onOpenScan={handleOpenModalScan} />
       </View>
       <View style={{ width: '100%', paddingVertical: 5 }}>
         <Step3 />
@@ -189,6 +200,13 @@ function Page(props) {
         />
       </View>
       <StatusBar style="auto" />
+      <ModalQrcode
+        open={scanDesc.open}
+        onClose={handleCloseModalScan}
+        title="扫描二维码"
+        data={scanDesc.data}
+        onCommit={handleCommitScan}
+      />
     </View>
   );
 }

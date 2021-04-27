@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect, useStore } from 'react-redux';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 import {
   withTheme,
   useTheme,
@@ -25,6 +26,14 @@ const menu = [
   // { title: '巡检', icon: 'verified', color:'orange', page: 'Factory'},
   // { title: '数据', icon: 'storage', color:'red', page: 'Factory'},
 ];
+const data = [
+  { image: 'https://ssl.ptlogin2.qq.com/testimg' },
+  { image: 'https://ssl.ptlogin2.qq.com/testimg' },
+  { image: 'https://ssl.ptlogin2.qq.com/testimg' },
+  { image: 'https://ssl.ptlogin2.qq.com/testimg' },
+  { image: 'https://ssl.ptlogin2.qq.com/testimg' },
+  { image: 'https://ssl.ptlogin2.qq.com/testimg' },
+];
 
 function Page(props) {
   const { theme } = useTheme();
@@ -36,74 +45,96 @@ function Page(props) {
     let item = menu[index];
     navigation.push(item.page);
   }
+  const renderRow = ({ item }) => {
+    return <CardDevice data={item} />;
+  };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}
-          onPress={() => navigation.push('Mine')}
-        >
-          <MaterialIcons name="person" size={40} color={theme.colors.primary} />
-          <Text
-            style={{
-              paddingLeft: 10,
-              fontSize: 24,
-              color: theme.colors.primary,
-            }}
-          >
-            {username}
-          </Text>
-        </TouchableOpacity>
-        <MaterialIcons
-          name="qr-code-scanner"
-          size={40}
-          color={theme.colors.primary}
-        />
-      </View>
-      <View
-        style={{ backgroundColor: 'grey', height: 1, width: '100%' }}
-      ></View>
-      <View style={{ width: '100%' }}>
-        <Tab
-          value={current}
-          onChange={handleChangePage}
-          indicatorStyle={{
-            backgroundColor: 'white',
-            height: 3,
-          }}
-          // variant="primary"
-        >
-          {menu.map((item, index) => {
-            return (
-              <Tab.Item
-                title={item.title}
-                key={index}
-                icon={
-                  <MaterialIcons
-                    name={item.icon}
-                    size={40}
-                    color={item.color}
-                  />
-                }
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}
+              onPress={() => navigation.push('Mine')}
+            >
+              <MaterialIcons
+                name="person"
+                size={40}
+                color={theme.colors.primary}
               />
-            );
-          })}
-        </Tab>
-      </View>
-      <View
-        style={{ backgroundColor: 'grey', height: 1, width: '100%' }}
-      ></View>
-      <View style={{ width: '100%' }}>
+              <Text
+                style={{
+                  paddingLeft: 10,
+                  fontSize: 24,
+                  color: theme.colors.primary,
+                }}
+              >
+                {username}
+              </Text>
+            </TouchableOpacity>
+            <MaterialIcons
+              name="qr-code-scanner"
+              size={40}
+              color={theme.colors.primary}
+            />
+          </View>
+          <View
+            style={{ backgroundColor: 'grey', height: 1, width: '100%' }}
+          ></View>
+          <View style={{ width: '100%' }}>
+            <Tab
+              value={current}
+              onChange={handleChangePage}
+              indicatorStyle={{
+                backgroundColor: 'white',
+                height: 3,
+              }}
+              // variant="primary"
+            >
+              {menu.map((item, index) => {
+                return (
+                  <Tab.Item
+                    title={item.title}
+                    key={index}
+                    icon={
+                      <MaterialIcons
+                        name={item.icon}
+                        size={40}
+                        color={item.color}
+                      />
+                    }
+                  />
+                );
+              })}
+            </Tab>
+          </View>
+          <View
+            style={{ backgroundColor: 'grey', height: 1, width: '100%' }}
+          ></View>
+          <View style={{ width: '100%' }}>
+            <FlatList
+              data={data}
+              keyExtractor={(a, index) => index.toString()}
+              renderItem={renderRow}
+            />
+            {/* <CardDevice data={{ image: 'https://ssl.ptlogin2.qq.com/testimg' }} />
         <CardDevice data={{ image: 'https://ssl.ptlogin2.qq.com/testimg' }} />
         <CardDevice data={{ image: 'https://ssl.ptlogin2.qq.com/testimg' }} />
         <CardDevice data={{ image: 'https://ssl.ptlogin2.qq.com/testimg' }} />
-      </View>
-      <StatusBar style="auto" />
-    </View>
+        <CardDevice data={{ image: 'https://ssl.ptlogin2.qq.com/testimg' }} />
+        <CardDevice data={{ image: 'https://ssl.ptlogin2.qq.com/testimg' }} />
+        <CardDevice data={{ image: 'https://ssl.ptlogin2.qq.com/testimg' }} />
+        <CardDevice data={{ image: 'https://ssl.ptlogin2.qq.com/testimg' }} /> */}
+          </View>
+          <StatusBar style="auto" />
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
 
