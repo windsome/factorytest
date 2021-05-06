@@ -15,6 +15,7 @@ import {
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { meSelect } from '../selectors/auth';
 import CardDevice from '../components/widgets/CardDevice';
+import ToastModule from '../_natives/ToastModule';
 
 const menu = [
   { title: '厂测', icon: 'settings', color: 'pink', page: 'Factory' },
@@ -49,6 +50,19 @@ function Page(props) {
     return <CardDevice data={item} />;
   };
 
+  function testToastModule (msg) {
+    ToastModule.show('Awesome '+msg, ToastModule.SHORT);
+  }
+
+  function testToastModuleCb () {
+    ToastModule.showCb('Awesome', ToastModule.LONG, testToastModule, testToastModule);
+  }
+
+  async function testToastModuleAsync () {
+    let result = await ToastModule.showAsync('Awesome', ToastModule.SHORT);
+    ToastModule.show(JSON.stringify(result), ToastModule.SHORT);
+  }
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -81,6 +95,7 @@ function Page(props) {
               name="qr-code-scanner"
               size={40}
               color={theme.colors.primary}
+              onPress={testToastModuleCb}
             />
           </View>
           <View

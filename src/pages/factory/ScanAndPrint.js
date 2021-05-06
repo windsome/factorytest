@@ -20,9 +20,11 @@ function Step1(props) {
   // 显示产品名称/ID, 测试通过数量, 测试失败数量
   return (
     <View style={{ width: '100%' }}>
-      <Text>产品名称</Text>
-      <Text>产品ID</Text>
-      <Text>成功设备数量: 10, 失败数量: 2</Text>
+      <Text>第一步: 检查产品信息</Text>
+      <Text>产品名称: 小蚁检测传感器</Text>
+      <Text>产品ID: 1f121231231231231</Text>
+      <Text>今天测试数量: 成功10台, 失败2台</Text>
+      <Text style={{color: 'blue'}}>查看已测试历史记录</Text>
     </View>
   );
 }
@@ -32,7 +34,7 @@ function Step2({ value, onChangeText, onOpenScan }) {
   // 扫描二维码
   return (
     <View style={{ width: '100%' }}>
-      <Text>扫码新品二维码获取IMEI</Text>
+      <Text>第二步: 扫码新品二维码获取IMEI</Text>
       <Input
         placeholder="点击右边按钮扫码"
         style={{ width: '100%' }}
@@ -69,7 +71,7 @@ function Step3(props) {
   function handlePrint() {}
   return (
     <View style={{ width: '100%' }}>
-      <Text>打印标签</Text>
+      <Text>第三步: 打印标签</Text>
       <Button
         title="打印标签"
         buttonStyle={{
@@ -102,7 +104,7 @@ function Step4(props) {
   function handlePrint() {}
   return (
     <View style={{ width: '100%' }}>
-      <Text>创建设备</Text>
+      <Text>第四步: 创建设备,等待并检查设备上报消息</Text>
       <Button
         title="创建设备"
         buttonStyle={{
@@ -141,6 +143,7 @@ function Page(props) {
   }
   function handleCommitScan(data) {
     console.log('scan result:', data);
+    setScanDesc({ open: false });
   }
   function handleOpenModalScan() {
     console.log('scan open');
@@ -156,12 +159,14 @@ function Page(props) {
       <View style={{ width: '100%', paddingVertical: 5 }}>
         <Step2 onOpenScan={handleOpenModalScan} />
       </View>
-      <View style={{ width: '100%', paddingVertical: 5 }}>
+      {/* <View style={{ width: '100%', paddingVertical: 5 }}>
         <Step3 />
-      </View>
+      </View> */}
       <View style={{ width: '100%', paddingVertical: 5 }}>
         <Step4 />
       </View>
+      <View style={{ width: '100%', paddingVertical: 5 }}>
+      <Text>第五步: 确认测试结果</Text>
       <View
         style={{
           width: '100%',
@@ -172,7 +177,7 @@ function Page(props) {
         }}
       >
         <Button
-          title="成功完成"
+          title="成功: 打印标签"
           buttonStyle={{
             backgroundColor: theme.colors.success,
             borderRadius: 3,
@@ -185,12 +190,12 @@ function Page(props) {
           }}
         />
         <Button
-          title="测试失败"
+          title="失败: 打印错误E11"
           buttonStyle={{
             backgroundColor: theme.colors.error,
             borderRadius: 3,
           }}
-          disabled
+          // disabled
           containerStyle={{
             width: 150,
             alignSelf: 'center',
@@ -198,6 +203,7 @@ function Page(props) {
             // marginVertical: 10,
           }}
         />
+      </View>
       </View>
       <StatusBar style="auto" />
       <ModalQrcode
