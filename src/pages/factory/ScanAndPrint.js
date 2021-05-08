@@ -28,12 +28,18 @@ import ModalQrcode from '../../components/widgets/ModalQrcode';
 import RefView from '../../components/widgets/RefView';
 import ViewShot, { captureScreen, captureRef } from 'react-native-view-shot';
 import QRCode from 'react-native-qrcode-svg';
-import {BluetoothManager,BluetoothEscposPrinter,BluetoothTscPrinter} from 'react-native-bluetooth-escpos-printer';
-import { Immersive } from 'react-native-immersive'
+import {
+  BluetoothManager,
+  BluetoothEscposPrinter,
+  BluetoothTscPrinter,
+} from 'react-native-bluetooth-escpos-printer';
+import { Immersive } from 'react-native-immersive';
 
-let mods = Object.keys(NativeModules)
+let mods = Object.keys(NativeModules);
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
+const PAPER_WIDTH = 58;
+const PAPER_HEIGHT = 36;
 
 let uri1 =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg==';
@@ -164,31 +170,31 @@ function Page(props) {
 
   const [scanDesc, setScanDesc] = React.useState({});
 
-  React.useEffect(()=>{
-    Immersive.on()
-    Immersive.setImmersive(true)
-    return () =>{
-      Immersive.off()
-      Immersive.setImmersive(false)
-    }
-  }, [])
-  React.useEffect(()=>{
-    async function init () {
+  React.useEffect(() => {
+    Immersive.on();
+    Immersive.setImmersive(true);
+    return () => {
+      Immersive.off();
+      Immersive.setImmersive(false);
+    };
+  }, []);
+  React.useEffect(() => {
+    async function init() {
       let isBtEnable = await BluetoothManager.isBluetoothEnabled();
       // alert(isBtEnable);
       if (!isBtEnable) {
         let r = await BluetoothManager.enableBluetooth();
         let paired = [];
-        if(r && r.length>0){
-            for(let i=0;i<r.length;i++){
-                try{
-                    paired.push(JSON.parse(r[i])); // NEED TO PARSE THE DEVICE INFORMATION
-                }catch(e){
-                    //ignore
-                }
+        if (r && r.length > 0) {
+          for (let i = 0; i < r.length; i++) {
+            try {
+              paired.push(JSON.parse(r[i])); // NEED TO PARSE THE DEVICE INFORMATION
+            } catch (e) {
+              //ignore
             }
+          }
         }
-        console.log(JSON.stringify(paired))
+        console.log(JSON.stringify(paired));
       }
 
       let address = await BluetoothManager.getConnectedDeviceAddress();
@@ -200,7 +206,7 @@ function Page(props) {
       }
     }
 
-    init()
+    init();
   }, []);
 
   function handleCloseModalScan() {
@@ -222,9 +228,16 @@ function Page(props) {
     captureRef(refView).then(onCapture);
   }, [onCapture]);
   const onPressCaptureAndPrint = React.useCallback(() => {
-    captureRef(refView, { result: 'base64' }).then((uri) => {
+    captureRef(refView, {
+      result: 'base64',
+      width: PAPER_WIDTH * 8,
+      height: PAPER_HEIGHT * 8,
+    }).then((uri) => {
       console.log('uri', uri);
-      return BluetoothEscposPrinter.printPic(uri, {width: 360})
+      return BluetoothEscposPrinter.printPic(uri, {
+        width: PAPER_WIDTH * 8,
+        height: PAPER_HEIGHT * 8,
+      });
     });
   }, [onCapture]);
 
@@ -261,7 +274,9 @@ function Page(props) {
               flexDirection: 'row',
               justifyContent: 'space-around',
               padding: 10,
-              backgroundColor: '#fff'
+              backgroundColor: '#fff',
+              width: SCREEN_WIDTH,
+              height: (SCREEN_WIDTH / PAPER_WIDTH) * PAPER_HEIGHT,
             }}
           >
             <View style={{ alignItems: 'center' }}>
