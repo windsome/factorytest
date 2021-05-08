@@ -2,7 +2,13 @@ import React from 'react';
 import { connect, useStore } from 'react-redux';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import {
   withTheme,
   useTheme,
@@ -50,15 +56,20 @@ function Page(props) {
     return <CardDevice data={item} />;
   };
 
-  function testToastModule (msg) {
-    ToastModule.show('Awesome '+msg, ToastModule.SHORT);
+  function testToastModule(msg) {
+    ToastModule.show('Awesome ' + msg, ToastModule.SHORT);
   }
 
-  function testToastModuleCb () {
-    ToastModule.showCb('Awesome', ToastModule.LONG, testToastModule, testToastModule);
+  function testToastModuleCb() {
+    ToastModule.showCb(
+      'Awesome',
+      ToastModule.LONG,
+      testToastModule,
+      testToastModule
+    );
   }
 
-  async function testToastModuleAsync () {
+  async function testToastModuleAsync() {
     let result = await ToastModule.showAsync('Awesome', ToastModule.SHORT);
     ToastModule.show(JSON.stringify(result), ToastModule.SHORT);
   }

@@ -1,3 +1,4 @@
+include ':react-native-bluetooth-escpos-printer'
 rootProject.name = 'myreactapp'
 
 apply from: '../node_modules/react-native-unimodules/gradle.groovy'

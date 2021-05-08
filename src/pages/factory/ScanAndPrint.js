@@ -1,7 +1,17 @@
 import React from 'react';
 import { connect, useStore } from 'react-redux';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, TouchableOpacity, FlatList } from 'react-native';
+import {
+  StyleSheet,
+  Dimensions,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  FlatList,
+  ToastAndroid,
+  Image,
+  NativeModules,
+} from 'react-native';
 import {
   withTheme,
   useTheme,
@@ -15,6 +25,18 @@ import {
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { meSelect } from '../../selectors/auth';
 import ModalQrcode from '../../components/widgets/ModalQrcode';
+import RefView from '../../components/widgets/RefView';
+import ViewShot, { captureScreen, captureRef } from 'react-native-view-shot';
+import QRCode from 'react-native-qrcode-svg';
+// import { BluetoothEscposPrinter } from '../../_natives/SunmiPrinterModule';
+
+let mods = Object.keys(NativeModules)
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const SCREEN_HEIGHT = Dimensions.get('window').height;
+
+let uri1 =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg==';
+let uri2 = 'https://reactnative.dev/img/tiny_logo.png';
 
 function Step1(props) {
   // 显示产品名称/ID, 测试通过数量, 测试失败数量
@@ -24,7 +46,7 @@ function Step1(props) {
       <Text>产品名称: 小蚁检测传感器</Text>
       <Text>产品ID: 1f121231231231231</Text>
       <Text>今天测试数量: 成功10台, 失败2台</Text>
-      <Text style={{color: 'blue'}}>查看已测试历史记录</Text>
+      <Text style={{ color: 'blue' }}>查看已测试历史记录</Text>
     </View>
   );
 }
@@ -136,6 +158,8 @@ function Step4(props) {
 function Page(props) {
   const { theme } = useTheme();
   let { navigation, me } = props;
+  const refView = React.useRef(null);
+  const [imgTag, setImgTag] = React.useState(null);
 
   const [scanDesc, setScanDesc] = React.useState({});
   function handleCloseModalScan() {
@@ -149,71 +173,116 @@ function Page(props) {
     console.log('scan open');
     setScanDesc({ open: true });
   }
+  const onCapture = React.useCallback((uri) => {
+    console.log('uri:', uri);
+    setImgTag({ uri });
+  }, []);
+  const onPressCaptureModalContent = React.useCallback(() => {
+    captureRef(refView).then(onCapture);
+  }, [onCapture]);
+  const onPressCaptureAndPrint = React.useCallback(() => {
+    captureRef(refView, { result: 'base64' }).then((uri) => {
+      // BluetoothEscposPrinter.printPic(uri, {width: 360})
+    });
+  }, [onCapture]);
+
+  let source = (imgTag && { uri: imgTag.uri }) || { uri: uri2 };
+  // console.log('imgTag', imgTag);
+  console.log('source', source, { SCREEN_WIDTH, SCREEN_HEIGHT });
+  console.log('NativeModules', mods);
 
   return (
-    <View style={styles.container}>
-      <View style={{ width: '100%', paddingVertical: 5 }}>
-        <Step1 />
-      </View>
-      <View style={{ backgroundColor: 'grey', height: 1, width: '100%' }} />
-      <View style={{ width: '100%', paddingVertical: 5 }}>
-        <Step2 onOpenScan={handleOpenModalScan} />
-      </View>
-      {/* <View style={{ width: '100%', paddingVertical: 5 }}>
+    <ScrollView>
+      <View style={styles.container}>
+        <View style={{ width: '100%', paddingVertical: 5 }}>
+          <Step1 />
+        </View>
+        <View style={{ backgroundColor: 'grey', height: 1, width: '100%' }} />
+        <View style={{ width: '100%', paddingVertical: 5 }}>
+          <Step2 onOpenScan={handleOpenModalScan} />
+        </View>
+        {/* <View style={{ width: '100%', paddingVertical: 5 }}>
         <Step3 />
       </View> */}
-      <View style={{ width: '100%', paddingVertical: 5 }}>
-        <Step4 />
-      </View>
-      <View style={{ width: '100%', paddingVertical: 5 }}>
-      <Text>第五步: 确认测试结果</Text>
-      <View
-        style={{
-          width: '100%',
-          paddingVertical: 5,
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Button
-          title="成功: 打印标签"
-          buttonStyle={{
-            backgroundColor: theme.colors.success,
-            borderRadius: 3,
-          }}
-          containerStyle={{
-            width: 150,
-            alignSelf: 'center',
-            // marginHorizontal: 50,
-            // marginVertical: 10,
-          }}
+        <View style={{ width: '100%', paddingVertical: 5 }}>
+          <Step4 />
+        </View>
+        <View style={{ width: '100%', paddingVertical: 5 }}>
+          <ViewShot onCapture={onCapture} captureMode="mount">
+            <Text>第五步: 确认测试结果</Text>
+          </ViewShot>
+          <View
+            ref={refView}
+            collapsable={false}
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              padding: 10,
+            }}
+          >
+            <View style={{ alignItems: 'center' }}>
+              <QRCode value="http://awesome.link.qr" />
+              <Text>awesome.link</Text>
+            </View>
+            <View style={{ alignItems: 'center' }}>
+              <QRCode value="http://awesome.link.qr" />
+              <Text>awesome.link</Text>
+            </View>
+          </View>
+          <View
+            style={{
+              width: '100%',
+              paddingVertical: 5,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+            }}
+          >
+            <Button
+              title="成功: 打印标签"
+              buttonStyle={{
+                backgroundColor: theme.colors.success,
+                borderRadius: 3,
+              }}
+              containerStyle={{
+                width: 150,
+                alignSelf: 'center',
+                // marginHorizontal: 50,
+                // marginVertical: 10,
+              }}
+              onPress={onPressCaptureAndPrint}
+            />
+            <Button
+              title="失败: 打印错误E11"
+              buttonStyle={{
+                backgroundColor: theme.colors.error,
+                borderRadius: 3,
+              }}
+              // disabled
+              containerStyle={{
+                width: 150,
+                alignSelf: 'center',
+                // marginHorizontal: 50,
+                // marginVertical: 10,
+              }}
+            />
+          </View>
+          <View style={{ width: '100%', backgroundColor: '#eee' }}>
+            <Image source={source} style={{ width: 360, height: 160 }} />
+            <Image source={{ uri: uri1 }} resizeMode="stretch" />
+          </View>
+        </View>
+        <StatusBar style="auto" />
+        <ModalQrcode
+          open={scanDesc.open}
+          onClose={handleCloseModalScan}
+          title="扫描二维码"
+          data={scanDesc.data}
+          onCommit={handleCommitScan}
         />
-        <Button
-          title="失败: 打印错误E11"
-          buttonStyle={{
-            backgroundColor: theme.colors.error,
-            borderRadius: 3,
-          }}
-          // disabled
-          containerStyle={{
-            width: 150,
-            alignSelf: 'center',
-            // marginHorizontal: 50,
-            // marginVertical: 10,
-          }}
-        />
       </View>
-      </View>
-      <StatusBar style="auto" />
-      <ModalQrcode
-        open={scanDesc.open}
-        onClose={handleCloseModalScan}
-        title="扫描二维码"
-        data={scanDesc.data}
-        onCommit={handleCommitScan}
-      />
-    </View>
+    </ScrollView>
   );
 }
 
@@ -228,7 +297,7 @@ export default connect(mapStateToProps, mapActionsToProps)(Page);
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    // flex: 1,
     width: '100%',
     paddingHorizontal: 10,
     backgroundColor: '#fff',
