@@ -24,9 +24,11 @@
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-native": "~0.63.4",
+    "react-native-bluetooth-escpos-printer": "https://github.com/windsome/react-native-bluetooth-escpos-printer.git",
     "react-native-camera": "^3.43.6",
     "react-native-elements": "^3.4.0",
     "react-native-gesture-handler": "^1.10.3",
+    "react-native-immersive": "^2.0.0",
     "react-native-qrcode-svg": "^6.1.1",
     "react-native-reanimated": "~2.1.0",
     "react-native-safe-area-context": "3.2.0",
@@ -68,5 +70,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
-  "private": true
+  "private": true,
+  "name": "factorytest",
+  "version": "1.0.0"
 }

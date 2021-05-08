@@ -12,6 +12,8 @@ target 'myreactapp' do
 
   if !ENV['CI']
     use_flipper!({ 'Flipper' => '0.80.0' })
+    pod 'RNBluetoothEscposPrinter', :path => '../node_modules/react-native-bluetooth-escpos-printer'
+
     post_install do |installer|
       flipper_post_install(installer)
     end

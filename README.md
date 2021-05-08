@@ -50,3 +50,8 @@ yarn react-native bundle --platform android --dev false --entry-file index.js --
   + 展示地图
   + GNSS定位当前位置,同时GNSS值显示在界面上.
   + 确认按钮,返回安装界面1.
+
+
+### 标签纸规格
+58mm * 37mm 包含缝隙及边距.
+实际白面为 55mm * 35mm, 缝隙为2mm

@@ -28,7 +28,8 @@ import ModalQrcode from '../../components/widgets/ModalQrcode';
 import RefView from '../../components/widgets/RefView';
 import ViewShot, { captureScreen, captureRef } from 'react-native-view-shot';
 import QRCode from 'react-native-qrcode-svg';
-// import { BluetoothEscposPrinter } from '../../_natives/SunmiPrinterModule';
+import {BluetoothManager,BluetoothEscposPrinter,BluetoothTscPrinter} from 'react-native-bluetooth-escpos-printer';
+import { Immersive } from 'react-native-immersive'
 
 let mods = Object.keys(NativeModules)
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -162,6 +163,46 @@ function Page(props) {
   const [imgTag, setImgTag] = React.useState(null);
 
   const [scanDesc, setScanDesc] = React.useState({});
+
+  React.useEffect(()=>{
+    Immersive.on()
+    Immersive.setImmersive(true)
+    return () =>{
+      Immersive.off()
+      Immersive.setImmersive(false)
+    }
+  }, [])
+  React.useEffect(()=>{
+    async function init () {
+      let isBtEnable = await BluetoothManager.isBluetoothEnabled();
+      // alert(isBtEnable);
+      if (!isBtEnable) {
+        let r = await BluetoothManager.enableBluetooth();
+        let paired = [];
+        if(r && r.length>0){
+            for(let i=0;i<r.length;i++){
+                try{
+                    paired.push(JSON.parse(r[i])); // NEED TO PARSE THE DEVICE INFORMATION
+                }catch(e){
+                    //ignore
+                }
+            }
+        }
+        console.log(JSON.stringify(paired))
+      }
+
+      let address = await BluetoothManager.getConnectedDeviceAddress();
+      console.log('address', address);
+      if (address != '00:11:22:33:44:55') {
+        // 需要连接
+        let s = await BluetoothManager.connect('00:11:22:33:44:55');
+        console.log('connect', s);
+      }
+    }
+
+    init()
+  }, []);
+
   function handleCloseModalScan() {
     setScanDesc({ open: false });
   }
@@ -182,7 +223,8 @@ function Page(props) {
   }, [onCapture]);
   const onPressCaptureAndPrint = React.useCallback(() => {
     captureRef(refView, { result: 'base64' }).then((uri) => {
-      // BluetoothEscposPrinter.printPic(uri, {width: 360})
+      console.log('uri', uri);
+      return BluetoothEscposPrinter.printPic(uri, {width: 360})
     });
   }, [onCapture]);
 
@@ -219,6 +261,7 @@ function Page(props) {
               flexDirection: 'row',
               justifyContent: 'space-around',
               padding: 10,
+              backgroundColor: '#fff'
             }}
           >
             <View style={{ alignItems: 'center' }}>
