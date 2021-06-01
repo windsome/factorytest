@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet,
   Dimensions,
+  PixelRatio,
   View,
   ScrollView,
   TouchableOpacity,
@@ -38,8 +39,34 @@ import { Immersive } from 'react-native-immersive';
 let mods = Object.keys(NativeModules);
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
-const PAPER_WIDTH = 58;
-const PAPER_HEIGHT = 36;
+
+/**
+ * 打印机相关规格参数
+ * 打印图片过程: 
+ *  -> printPic(base64encodeStr, options)
+ *    -> 将base64转为图片二进制数据: Base64.decode(), BitmapFactory.decodeByteArray()
+ *    -> 将图片压缩转换后得到栅格数据 PrintPicture.POS_PrintBMP()
+ *    -> 发送打印数据
+            sendDataByte(Command.ESC_Init);
+            sendDataByte(Command.LF);
+            sendDataByte(data);
+            sendDataByte(PrinterCommand.POS_Set_PrtAndFeedPaper(30));
+            sendDataByte(PrinterCommand.POS_Set_Cut(1));
+            sendDataByte(PrinterCommand.POS_Set_PrtInit());
+  在这个过程要注意, 图片会经过转换, 为了走纸准确, 图片宽度必须是8的倍数,若宽度超过最大值WIDTH_58,则最好能转成整数WIDTH_58.
+  经过转换的图片高度,要是可预计的准确高度, 确保走纸准确.
+  为此, 我们取图片时, 宽度取成WIDTH_58的倍数. 简化起见:
+  图片宽度为 width = WIDTH_58 = 384
+  图片高度为 height = (35+2)*8 - 30 = 266
+ */
+const WIDTH_58 = 384; // 打印纸实际使用宽度像素数, 8px/mm, 实际使用48mm,对应58mm规格
+const WIDTH_80 = 576; // 打印纸实际使用宽度像素数, 8px/mm, 实际使用72mm,对应80mm规格
+const PAPER_HEIGHT = 35; // 35mm
+const PAPER_GAP = 2; // 2mm
+const PAPER_WIDTH = 58; // 58mm, 打印纸规格宽度(打印机支持的宽度), 一般为58mm, 80mm
+
+const IMAGE_WIDTH = WIDTH_58;
+const IMAGE_HEIGHT = (35+2)*8-80;
 
 let uri1 =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg==';
@@ -60,6 +87,11 @@ function Step1(props) {
 
 function Step2({ value, onChangeText, onOpenScan }) {
   const { theme } = useTheme();
+  let textRef = React.useRef(null);
+  React.useEffect(()=>{
+    if (textRef.current)
+      textRef.current.focus();
+  },[])
   // 扫描二维码
   return (
     <View style={{ width: '100%' }}>
@@ -84,7 +116,7 @@ function Step2({ value, onChangeText, onOpenScan }) {
               size={24}
               color={theme.colors.primary}
             />
-            <Text style={{ paddingLeft: 10, fontSize: 15, color: '#212121' }}>
+            <Text ref={textRef} collapsable={false} style={{ paddingLeft: 10, fontSize: 15, color: '#212121' }}>
               扫描芯片二维码
             </Text>
           </TouchableOpacity>
@@ -227,24 +259,29 @@ function Page(props) {
   const onPressCaptureModalContent = React.useCallback(() => {
     captureRef(refView).then(onCapture);
   }, [onCapture]);
+  let ratio = PixelRatio.get();
   const onPressCaptureAndPrint = React.useCallback(() => {
     captureRef(refView, {
       result: 'base64',
-      width: PAPER_WIDTH * 8,
-      height: PAPER_HEIGHT * 8,
+      width: IMAGE_WIDTH / ratio,
+      height: IMAGE_HEIGHT/ ratio,
     }).then((uri) => {
       console.log('uri', uri);
       return BluetoothEscposPrinter.printPic(uri, {
-        width: PAPER_WIDTH * 8,
-        height: PAPER_HEIGHT * 8,
+        width: IMAGE_WIDTH,
+        height: IMAGE_HEIGHT,
       });
     });
   }, [onCapture]);
+  let imgContainerWidth = SCREEN_WIDTH - 20;
+  let imgContainerHeight = ((SCREEN_WIDTH -20) / IMAGE_WIDTH) * IMAGE_HEIGHT;
 
   let source = (imgTag && { uri: imgTag.uri }) || { uri: uri2 };
   // console.log('imgTag', imgTag);
-  console.log('source', source, { SCREEN_WIDTH, SCREEN_HEIGHT });
-  console.log('NativeModules', mods);
+  console.log('screen', { width: SCREEN_WIDTH, height: SCREEN_HEIGHT });
+  console.log('container', { width: imgContainerWidth, height: imgContainerHeight });
+  console.log('image', { width: IMAGE_WIDTH, height: IMAGE_HEIGHT });
+  console.log('image1', { width1: IMAGE_WIDTH / ratio, height1: IMAGE_HEIGHT/ ratio });
 
   return (
     <ScrollView>
@@ -272,11 +309,14 @@ function Page(props) {
             style={{
               display: 'flex',
               flexDirection: 'row',
-              justifyContent: 'space-around',
-              padding: 10,
+              borderColor:'#000',
+              borderWidth:2,
+              // justifyContent: 'space-around',
+              justifyContent: "space-between",
+              // padding: 10,
               backgroundColor: '#fff',
-              width: SCREEN_WIDTH,
-              height: (SCREEN_WIDTH / PAPER_WIDTH) * PAPER_HEIGHT,
+              width: imgContainerWidth,
+              // height: imgContainerHeight,
             }}
           >
             <View style={{ alignItems: 'center' }}>
